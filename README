@@ -1,0 +1,83 @@
+DESCRIPTION
+
+This program reads data from one or more files and finds bytes or
+groups of bytes which are different. The differences are displayed in
+both hexadecimal and ASCII and highlighted for easy comparison.
+
+CHANGES
+
+0.01 - 2018-04-01
+	- Initial release
+
+0.02 - 2018-04-18
+	- Added -I option to ignore differences
+	- Added llq_num.c and llq_num.h in support of ignore
+
+0.03 - 2018-07-05
+	- Fixed issue with starting position past a smaller shift
+	- Fixed issue reading from STDIN
+
+0.04 - 2018-10-02
+	- Fixed infinite loop reading from STDIN with offset past EOF
+	- Adjusted bytes read from STDIN due to inability to seek
+	- Handle 0 position edge cases to prevent infinite loops
+
+0.05 - 2018-10-26
+	- Fixed calculating differences based on word size with -h
+	- Highlighting performed along with difference calculations
+	- Limited highlighting width to maximum byte size (size_t)
+	- Added version number and release date to usage
+
+0.06 - 2018-10-26
+	- Fixed difference count used to determine if a line is printed
+
+0.07 - 2018-11-17
+	- Fixed comparing NULL bytes with zero as different
+
+0.08 - 2018-12-07
+	- Added the -u option to display uppercase hexadecimal values
+
+0.09 - 2018-12-14
+	- Fixed comparing NULL bytes to NULL bytes as different
+	- Fixed displaying an empty line of all NULLs at EOF
+
+0.10 - 2019-02-06
+	- Prevent reading in a directory as a file
+
+0.11 - 2019-03-07
+	- Improved difference comparison, especially for NULL bytes
+	- Allow ignoring a difference of zero with -I, which can be
+	  be relevant with using -N to compare NULL bytes with zeroes
+
+0.12 - 2019-07-06
+	- Further improved difference comparison
+	- NULL bytes are not different if both are NULL
+	- Added ifdef on assert for compiling on older systems
+
+COMPILING
+
+A simple Makefile has been provided to compile and install this program
+on Linux systems. A different compiling procedure may be required on
+other system types. To compile on a Linux system, simply execute the
+following. Other options to `make` include uninstall, clean, and opt.
+
+	make && sudo make install
+
+LICENSE
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+COPYRIGHT
+
+Copyright (C) 2018-2019 Christopher J. Dunkle

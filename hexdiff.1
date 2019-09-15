@@ -1,0 +1,277 @@
+.TH hexdiff 1 "July 2019" "user manual"
+.SH NAME
+.PP
+hexdiff - Display hexadecimal differences between files
+.SH SYNOPSIS
+.PP
+hexdiff [\f[I]OPTION\f[]]... \f[I]FILE0\f[] [\f[I]FILE1\f[]]...
+.SH DESCRIPTION
+.PP
+This program reads data from one or more files and finds bytes or
+groups of bytes which are different.
+The differences are displayed in both hexadecimal and ASCII and
+highlighted for easy comparison.
+Each data set is separated into lines of bytes, with each line
+consisting of the same width of bytes.
+If only one data set is provided, the entire data set is displayed.
+Otherwise only the differences are displayed by default.
+.PP
+It will start processing each data set at position 0 by default.
+If the starting offset position is set with the \f[B]-s\f[] option, it
+will skip the specified bytes by using lseek() (if and when supported)
+to jump to that position in the input, or by reading and discarding the
+specified number of bytes.
+.PP
+Each data set can also be shifted with the \f[B]-S\f[] option, which
+will add the specified number of NULL bytes to the beginning.
+NULL bytes can also exist after the end of one data set while other
+data sets continue in the output.
+NULL bytes are not compared as different unless the \f[B]-N\f[] option
+is provided.
+.PP
+If the input continues to provide data, it will continue to read data
+until end-of-file (EOF) is reached or the maximum length specified by
+the \f[B]-l\f[] option is reached in the output.
+The output of all data sets will start at the position specified by the
+\f[B]-p\f[] option.
+.PP
+The internal buffer used to read and write data is allocated at program
+runtime.
+The default size of this buffer is 256 KB, and can be changed to an
+exact value with the \f[B]-b\f[] option.
+.PP
+Each input file can be specified as a separate parameter.
+STDIN can be specified once and only once with "-".
+.PP
+This program also supports hexadecimal values for the parameters.
+Any of the numeric parameters can be prepended with \f[B]0x\f[] to
+indicate that the value is hexadecimal.
+.SH OPTIONS
+.TP
+.B -v
+By default, only those lines with differences are displayed.
+This option enables verbose output to display all lines in the output,
+regardless if there are any differences or not.
+.RS
+.RE
+.TP
+.B -q
+By default, the output includes the input file name associated with
+each data set, the total number of bytes displayed for each data set,
+bars surrounding the ASCII data, and a spacer line between groups of
+lines that have differences.
+This option enables quiet output and disables printing these features.
+.RS
+.RE
+.TP
+.B -Q
+By default, the output includes the current position of each line
+displayed from the data sets.
+This option enables quiet output and disables printing this feature.
+.RS
+.RE
+.TP
+.B -n
+By default, the output includes ANSI color codes.
+Differences between the data sets are highlighted with specific colors
+so they are easier to locate.
+This option disables ANSI color codes in the output, including the
+difference highlights.
+This option should be used if the output is post-processed.
+.RS
+.RE
+.TP
+.B -d
+By default, the output only displays the input data sets.
+This option enables an additional data set which is the mathematical
+difference between bytes in the given data sets, by subtracting the
+first differing data set from the second differing data set.
+If more than two data sets are used, the differences are calculated on
+the first two data sets which are not NULL.
+If only one data set is given, this option has no effect.
+Non-differing bytes will be displayed as NULL hexadecimal characters,
+unless they are between two differing bytes on the same line, in which
+they will be displayed as zeroes instead.
+.IP
+The \f[B]-h\f[] option can be used to change the highlighted word size
+when displaying differences.
+When \f[B]-h\f[] is set to a number higher than 1, the differences
+shown by \f[B]-d\f[] are calculated based on the difference between
+the two words and not just the individual bytes, which may differ due
+to underflow in the subtraction.
+.RS
+.RE
+.TP
+.B -H
+By default, both hexadecimal and ASCII values are displayed.
+This option suppresses the ASCII output and only displays the
+hexadecimal values.
+.RS
+.RE
+.TP
+.B -A
+By default, both hexadecimal and ASCII values are displayed.
+This option suppresses the hexadecimal output and only displays the
+ASCII values.
+.RS
+.RE
+.TP
+.B -N
+By default, NULL bytes are ignored when calculating differences between
+bytes.
+This option will enable NULL bytes to be included when comparing bytes
+or a group of bytes.
+If the \f[B]-d\f[] option is enabled to calculate mathematical
+differences, a NULL byte is assumed to be a value of 0.
+A difference value of 0 should only exist when this option is used and
+one value is NULL and the other is 0, and can be ignored with the
+\f[B]-I\f[] option.
+.RS
+.RE
+.TP
+.B -t
+This option will display (to STDERR) the time elapsed for the execution
+of the program.
+.RS
+.RE
+.TP
+.B -u
+This option will display all hexadecimal values in uppercase instead of
+lowercase, including the position.
+.RS
+.RE
+.TP
+.B -p \f[I]offset\f[]
+Sets the starting offset position where the output begins.
+The default is 0, indicating that it will start at the beginning.
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -l \f[I]length\f[]
+Sets the maximum length of data to include in the output.
+The default is -1, indicating that it will read and output data until
+all data sets are EOF.
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -w \f[I]width\f[]
+Sets the number of bytes to include on each line of each data set.
+The default is 16.
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -h \f[I]width\f[]
+Sets the number of bytes to highlight as a group when a single byte
+difference is found.
+Setting this option also causes the calculated differences provided by
+the \f[B]-d\f[] option to expand to the entire width given.
+For example, setting this value to 4 will cause the entire 4 byte word
+to be highlighted for a single byte difference within the word, and
+the difference will be calculated by substracting the two words instead
+of the individual bytes.
+Due to the difference calculation, this value is limited to the
+maximum byte size (size_t), which should be 4 bytes on a 32-bit system
+and 8 bytes on a 64-bit system.
+The default is 1.
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -c \f[I]context\f[]
+Sets the number lines of context to display around lines that contain
+at least one difference. This option is useful to view additional data
+around the differences.
+The default is 0.
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -s \f[I]#:seek\f[]
+Seeks to the offset position of the given file number (#).
+For example, \f[B]-s 0:256\f[] will seek file 0 to position 256, and
+thus position 0 of the output will contain the data that is actually
+stored at position 256 of the data set.
+The default is 0 for each data set.
+This option can be specified for each data set.
+This option is applied before \f[B]-S\f[].
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -S \f[I]#:shift\f[]
+Shifts the starting offset position for the given file number (#),
+adding the specified number of NULL bytes to the beginning of the data
+set.
+For example, \f[B]-S 0:256\f[] will insert 256 NULL bytes at the
+beginning of the data set for file 0.
+The default is 0 for each data set.
+This option can be specified for each data set.
+This option is applied after \f[B]-s\f[].
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -X \f[I]#\f[]
+Excludes output for the given file number (#), suppressing it from
+being displayed.
+For example, \f[B]-X 0\f[] will prevent the data from file 0 from being
+included in the output.
+This option can be useful for only displaying specific data sets, or
+for only displaying the differences provided by the \f[B]-d\f[] option.
+This option can also be useful with the \f[B]-q\f[] and \f[B]-Q\f[]
+options to reduce the output to only relevant values.
+.RS
+.RE
+.TP
+.B -I \f[I]diff\f[]
+Ignores the given difference value by adding it to a list.
+This option can be specified multiple times to ignore more than one
+difference value.
+Difference values are displayed with the \f[B]-d\f[] option.
+The values to ignore are dependent on the number of bytes to hightlight
+as a group specified by the \f[B]-h\f[] option.
+If a four byte difference is added to the ignore list, the \f[B]-h\f[]
+option must be set to at least 4 to ensure the ignore value can be
+matched.
+If the highlight width is smaller than a given ignore value, the ignore
+value will never match.
+A difference value of 0 can exist when the \f[B]-N\f[] option is
+used and one file is NULL and the other is 0, which can also be
+ignored by setting this option with a 0 value.
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.RS
+.RE
+.TP
+.B -b \f[I]size\f[]
+Sets the allocated buffer size for each data set.
+The default is 262144 bytes.
+Hexadecimal values prepended with \f[B]0x\f[] are valid.
+Suffixes are not supported, so the value must be exact.
+.SH LICENSE
+.PP
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+.PP
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.SH COPYRIGHT
+.PP
+Copyright (C) 2018-2019 Christopher J. Dunkle
