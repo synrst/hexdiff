@@ -10,10 +10,10 @@ All of these features make this implementation an extremely powerful comparison 
 
 ## Examples
 
-The following example sets the number of bytes to include on each line of each data set to 8 (-w 8), displays an additional data set which is the mathematical difference between the other data sets (-d), sets the number of bytes to highlight as a group when a single byte difference is found to 4 (-h 4) which also affects the calculated differences, and displays 1 line of context (-c 1).
+The following example sets the number of bytes to include on each line of each data set to 8 (-w 8), displays an additional data set which is the mathematical difference between the other data sets (-d), sets the number of difference bytes to highlight to 4 (-h 4) which also affects the calculated differences, and displays 1 line of context (-c 1) before and after any differences.
 
 ![Example 01](../extras/hexdiff-example-01.png?raw=true)
 
-The following example shifts the second data set (file number 1) by 0x20 bytes (-S 1:0x20) which inserts 32 bytes of NULLs at the beginning, displays all lines regardless of differences (-v), treat NULL bytes as different (-N), and sets the maximum length to 128 bytes (-l 128). Due to the 32 NULL bytes, the number of bytes processed on the second data set is only 96 bytes.
+The following example shifts the second data set (file number 1) by 0x20 bytes (-S 1:0x20) which inserts 32 bytes of NULLs at the beginning so the files match up, displays all lines regardless of differences (-v), treats NULL bytes as different (-N), and sets the maximum length to 128 bytes (-l 128). Due to the inserted NULLs, the number of bytes processed on the second data set is only 96 bytes.
 
 ![Example 02](../extras/hexdiff-example-02.png?raw=true)
