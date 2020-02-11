@@ -54,6 +54,9 @@ CHANGES
 	- NULL bytes are not different if both are NULL
 	- Added ifdef on assert for compiling on older systems
 
+0.13 - 2020-02-10
+	- Fixed potential bit shift overflow in print_empty_pos()
+
 COMPILING
 
 A simple Makefile has been provided to compile and install this program
@@ -80,4 +83,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 COPYRIGHT
 
-Copyright (C) 2018-2019 Christopher J. Dunkle
+Copyright (C) 2018-2020 Christopher J. Dunkle

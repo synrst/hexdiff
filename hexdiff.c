@@ -16,8 +16,8 @@
 #include "llq.h"
 #include "llq_num.h"
 
-#define CODE_VERSION		"0.12"
-#define CODE_DATE		"2019-07-06"
+#define CODE_VERSION		"0.13"
+#define CODE_DATE		"2020-02-10"
 #define MAX_FILES		4		// maximum files to load
 #define MAX_LENGTH		(size_t)-1	// maximum unsigned length
 #define STD_BUF_SIZE		(size_t)262144
@@ -228,18 +228,23 @@ int print_empty_pos(size_t pos, int flags) {
 		return 0;
 	}
 
-	// determine length of hex value
+	// determine number of hex characters
 	ch_len = 0;
-	if (pos == 0) {
+	if (pos == 0 || pos <= 0xffffffff) {
 		ch_len = 8;
 	}
 	else {
-		while (pos >> (4*ch_len) != 0) {
+		// calculate number of hex characters
+		// with bit shift chopping
+		while (pos != 0) {
+			pos >>= 4;
 			ch_len++;
 		}
-	}
-	if (ch_len < 8) {
-		ch_len = 8;
+
+		// minimum of 8 characters
+		if (ch_len < 8) {
+			ch_len = 8;
+		}
 	}
 
 	// print determined number of spaces
