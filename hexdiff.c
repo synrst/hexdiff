@@ -16,8 +16,8 @@
 #include "llq.h"
 #include "llq_num.h"
 
-#define CODE_VERSION		"0.13"
-#define CODE_DATE		"2020-02-10"
+#define CODE_VERSION		"0.14"
+#define CODE_DATE		"2020-06-18"
 #define MAX_FILES		4		// maximum files to load
 #define MAX_LENGTH		(size_t)-1	// maximum unsigned length
 #define STD_BUF_SIZE		(size_t)262144
@@ -1081,6 +1081,12 @@ int main(int argc, char* argv[]) {
 		// assume files are not end-of-output
 		eoo_cnt = 0;
 
+		// calculate maximum width of this line according to length
+		mlw = width;
+		if (pos < end_pos && end_pos < (pos + width)) {
+			mlw = end_pos - pos;
+		}
+
 		// loop through files
 		for (i = 0; i < file_cnt; i++) {
 
@@ -1124,7 +1130,7 @@ int main(int argc, char* argv[]) {
 		for (j = 0; j < i; j++) {
 
 			// compare lines
-			if (sbuf_diff_cmp(sb[j], sb[i], pos, width, diff, hl_width) > 0) {
+			if (sbuf_diff_cmp(sb[j], sb[i], pos, mlw, diff, hl_width) > 0) {
 
 				// unmark ignore values
 				sbuf_diff_unmark_ignore(diff, hl_width, ignore);
@@ -1156,12 +1162,6 @@ int main(int argc, char* argv[]) {
 
 			// increment context
 			context_after++;
-		}
-
-		// calculate maximum width of this line according to length
-		mlw = width;
-		if (pos < end_pos && end_pos < (pos + width)) {
-			mlw = end_pos - pos;
 		}
 
 		/*****/
@@ -1268,7 +1268,7 @@ int main(int argc, char* argv[]) {
 				// update cache
 				tmp = cache_add(sb[i], cache[i], pos, context);
 
-				// printer spacer
+				// print spacer
 				if (! spacer_printed && i == 0 && tmp > 0) {
 					print_spacer(flags);
 					spacer_printed = 1;
@@ -1312,6 +1312,15 @@ int main(int argc, char* argv[]) {
 
 	/******************************/
 
+	// data in cache, print final spacer
+	// NOTE: occurs if context is larger than files to compare
+	if (context > 0 && cache[0]->active.size > 0) {
+		if (! spacer_printed) {
+			print_spacer(flags);
+			spacer_printed = 1;
+		}
+	}
+
 	if (! (flags & FLAG_QUIET1)) {
 
 		// print spaces in place of last position
@@ -1346,16 +1355,6 @@ int main(int argc, char* argv[]) {
 		}
 
 		printf("\n");
-	}
-
-	// data in cache, print final spacer
-	// NOTE: will this condition ever hold true?
-	// NOTE: should not print the spacer after the number of bytes
-	if (context > 0 && cache[0]->active.size > 0) {
-		if (! spacer_printed) {
-			print_spacer(flags);
-			spacer_printed = 1;
-		}
 	}
 
 	/*****/

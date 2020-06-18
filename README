@@ -57,6 +57,12 @@ CHANGES
 0.13 - 2020-02-10
 	- Fixed potential bit shift overflow in print_empty_pos()
 
+0.14 - 2020-06-18
+	- Fixed inadvertently printing last line if differences exist
+	  past the specified length by using mlw instead of width
+	- Fixed printing spacer before file bytes instead of after when
+	  context was larger than files to compare
+
 COMPILING
 
 A simple Makefile has been provided to compile and install this program
